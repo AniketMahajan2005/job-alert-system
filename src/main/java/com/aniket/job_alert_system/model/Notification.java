@@ -25,7 +25,9 @@ public class Notification {
     @Column(nullable = false)
     private String message;              // e.g. "New job matching your profile!"
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
+//    private LocalDateTime sentAt;
+    @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime sentAt;
 
     @PrePersist

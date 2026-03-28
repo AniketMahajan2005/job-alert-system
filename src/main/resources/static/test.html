@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+    <h2>Job Alert WebSocket Test</h2>
+    <input type="text" id="email" placeholder="Enter your email" />
+    <button onclick="connect()">Connect</button>
+    <br/><br/>
+    <div id="notifications" style="border:1px solid green; padding:10px; min-height:100px;">
+        Notifications will appear here...
+    </div>
+
+    <script>
+        let stompClient = null;
+
+        function connect() {
+            const email = document.getElementById('email').value;
+            const socket = new SockJS('http://localhost:8080/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function(frame) {
+                console.log('Connected: ' + frame);
+                document.getElementById('notifications').innerHTML = 
+                    '<p style="color:green">✅ Connected! Waiting for notifications...</p>';
+
+                // Subscribe to this user's notification topic
+                stompClient.subscribe('/topic/notifications/' + email, function(message) {
+                    const div = document.getElementById('notifications');
+                    div.innerHTML += '<p style="color:blue">🔔 ' + message.body + '</p>';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

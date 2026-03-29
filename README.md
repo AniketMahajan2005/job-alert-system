@@ -9,6 +9,9 @@ A real-time job alert backend system built with Java Spring Boot.
 - RESTful APIs for job posting and searching
 - MySQL database with JPA/Hibernate
 
+## Live Demo
+Base URL: `https://job-alert-system-3.onrender.com`
+
 ## Tech Stack
 - Java 17
 - Spring Boot 4.x

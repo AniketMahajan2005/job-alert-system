@@ -21,6 +21,8 @@ public class RegisterRequest {
 
     private String preferences;
 
+    private String adminKey;
+
 
 
 }

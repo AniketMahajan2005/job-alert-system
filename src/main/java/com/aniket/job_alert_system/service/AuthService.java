@@ -8,6 +8,7 @@ import com.aniket.job_alert_system.model.User;
 import com.aniket.job_alert_system.repository.UserRepository;
 import com.aniket.job_alert_system.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,24 +29,55 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public AuthResponse register(RegisterRequest request) {
+//    public AuthResponse register(RegisterRequest request) {
+//
+//        if(userRepository.existsByEmail(request.getEmail())) {
+//            throw  new RuntimeException(("Email already registered"));
+//        }
+//
+//        User user = new User();
+//        user.setName(request.getName());
+//        user.setEmail(request.getEmail());
+//        user.setPassword(passwordEncoder.encode(request.getPassword()));
+//        user.setRole(("User"));
+//        user.setPreferences(request.getPreferences());
+//
+//        userRepository.save(user);
+//
+//        String token = jwtUtil.generateToken(user.getEmail());
+//
+//        return new AuthResponse(token,user.getRole(),"Registration Successful");
+//    }
+        @Value("${app.admin.secret-key}")
+        private String adminSecretKey;
 
-        if(userRepository.existsByEmail(request.getEmail())) {
-            throw  new RuntimeException(("Email already registered"));
-        }
+        public AuthResponse register(RegisterRequest request) {
+            // Check if email already exists
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new RuntimeException("Email already registered");
+            }
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(("User"));
-        user.setPreferences(request.getPreferences());
+            // Build user object
+            User user = new User();
+            user.setName(request.getName());
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPreferences(request.getPreferences());
 
-        userRepository.save(user);
+            // Check admin key
+            if (request.getAdminKey() != null &&
+                    request.getAdminKey().equals(adminSecretKey)) {
+                user.setRole("ADMIN");
+            } else {
+                user.setRole("USER");
+            }
 
-        String token = jwtUtil.generateToken(user.getEmail());
+            userRepository.save(user);
 
-        return new AuthResponse(token,user.getRole(),"Registration Successful");
+            String token = jwtUtil.generateToken(user.getEmail());
+            return new AuthResponse(token, user.getRole(), "Registration successful");
+
+
     }
 
     public AuthResponse login(LoginRequest request){

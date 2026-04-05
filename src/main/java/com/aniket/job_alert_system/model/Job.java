@@ -30,10 +30,10 @@ public class Job implements Serializable {
     @Column(nullable = false)
     private String skillsRequired;
 
-//    @Column(nullable = false)
-//    private LocalDateTime postedAt;
-    @Column(nullable = false, columnDefinition = "DATETIME")
+    @Column(nullable = false)
     private LocalDateTime postedAt;
+//    @Column(nullable = false, columnDefinition = "DATETIME")
+//    private LocalDateTime postedAt;
 
 
     @PrePersist                          // Runs automatically before saving to DB
